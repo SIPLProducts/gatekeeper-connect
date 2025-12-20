@@ -8,6 +8,9 @@ import InboundEntry from "./pages/InboundEntry";
 import OutboundDelivery from "./pages/OutboundDelivery";
 import RGPManagement from "./pages/RGPManagement";
 import VisitorManagement from "./pages/VisitorManagement";
+import Weighbridge from "./pages/Weighbridge";
+import Notifications from "./pages/Notifications";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,9 +32,9 @@ const App = () => (
           <Route path="/nrgp" element={<RGPManagement />} />
           <Route path="/visitors" element={<VisitorManagement />} />
           <Route path="/visitors/new" element={<VisitorManagement />} />
-          <Route path="/weighbridge" element={<InboundEntry />} />
-          <Route path="/notifications" element={<Index />} />
-          <Route path="/settings" element={<Index />} />
+          <Route path="/weighbridge" element={<Weighbridge />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
