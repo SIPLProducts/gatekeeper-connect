@@ -6,12 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, Building2, Bell, Lock, Palette, Globe } from "lucide-react";
+import { Settings as SettingsIcon, Building2, Bell, Lock, Palette, Globe, Users, Shield } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { UserManagement } from "@/components/settings/UserManagement";
+import { ScreenPermissions } from "@/components/settings/ScreenPermissions";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("general");
+  const { isAdmin } = useAuth();
 
   const handleSave = () => {
     toast.success("Settings saved successfully");
@@ -20,9 +24,11 @@ export default function Settings() {
   return (
     <MainLayout title="Settings" subtitle="Configure system preferences and options">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full max-w-2xl grid-cols-5">
+        <TabsList className={`grid w-full max-w-3xl ${isAdmin ? 'grid-cols-7' : 'grid-cols-5'}`}>
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="company">Company</TabsTrigger>
+          {isAdmin && <TabsTrigger value="users">Users</TabsTrigger>}
+          {isAdmin && <TabsTrigger value="permissions">Permissions</TabsTrigger>}
           <TabsTrigger value="notifications">Alerts</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
           <TabsTrigger value="appearance">Theme</TabsTrigger>
@@ -127,6 +133,18 @@ export default function Settings() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {isAdmin && (
+          <TabsContent value="users" className="space-y-6">
+            <UserManagement />
+          </TabsContent>
+        )}
+
+        {isAdmin && (
+          <TabsContent value="permissions" className="space-y-6">
+            <ScreenPermissions />
+          </TabsContent>
+        )}
 
         <TabsContent value="notifications" className="space-y-6">
           <Card>
