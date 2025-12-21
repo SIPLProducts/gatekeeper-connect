@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Truck,
@@ -16,6 +16,8 @@ import {
   Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -32,6 +34,36 @@ const navigation = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { profile, roles, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("Logged out successfully");
+    navigate("/auth");
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getRoleLabel = () => {
+    if (roles.length === 0) return "User";
+    const roleLabels: Record<string, string> = {
+      admin: "Admin",
+      security_guard: "Security",
+      store_manager: "Store Mgr",
+      plant_manager: "Plant Mgr",
+      finance_head: "Finance",
+      viewer: "Viewer",
+    };
+    return roleLabels[roles[0]] || roles[0];
+  };
 
   return (
     <aside
@@ -91,16 +123,24 @@ export function Sidebar() {
       <div className="border-t border-sidebar-border p-4">
         <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-foreground">
-            <span className="text-sm font-semibold">SA</span>
+            <span className="text-sm font-semibold">
+              {profile?.full_name ? getInitials(profile.full_name) : "U"}
+            </span>
           </div>
           {!collapsed && (
-            <div className="flex-1 animate-fade-in">
-              <p className="text-sm font-medium text-sidebar-foreground">Super Admin</p>
-              <p className="text-xs text-sidebar-foreground/60">admin@company.com</p>
+            <div className="flex-1 animate-fade-in min-w-0">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">
+                {profile?.full_name || "User"}
+              </p>
+              <p className="text-xs text-sidebar-foreground/60">{getRoleLabel()}</p>
             </div>
           )}
           {!collapsed && (
-            <button className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground">
+            <button 
+              onClick={handleLogout}
+              className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              title="Logout"
+            >
               <LogOut className="h-4 w-4" />
             </button>
           )}
