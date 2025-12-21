@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import InboundEntry from "./pages/InboundEntry";
 import OutboundDelivery from "./pages/OutboundDelivery";
 import RGPManagement from "./pages/RGPManagement";
+import NRGPManagement from "./pages/NRGPManagement";
 import VisitorManagement from "./pages/VisitorManagement";
 import Weighbridge from "./pages/Weighbridge";
 import Notifications from "./pages/Notifications";
@@ -29,7 +30,8 @@ const App = () => (
           <Route path="/outbound/new" element={<OutboundDelivery />} />
           <Route path="/rgp" element={<RGPManagement />} />
           <Route path="/rgp/new" element={<RGPManagement />} />
-          <Route path="/nrgp" element={<RGPManagement />} />
+          <Route path="/nrgp" element={<NRGPManagement />} />
+          <Route path="/nrgp/new" element={<NRGPManagement />} />
           <Route path="/visitors" element={<VisitorManagement />} />
           <Route path="/visitors/new" element={<VisitorManagement />} />
           <Route path="/weighbridge" element={<Weighbridge />} />
