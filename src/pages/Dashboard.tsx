@@ -33,13 +33,14 @@ export default function Dashboard() {
 
   return (
     <MainLayout title="Dashboard" subtitle="Gate Management Overview">
-      {/* Welcome Message */}
-      <Card className="mb-6 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20 animate-fade-in">
-        <CardContent className="p-6">
+      {/* Welcome Message with gradient colors */}
+      <Card className="mb-6 bg-gradient-to-r from-secondary/20 via-secondary/10 to-transparent border-secondary/30 animate-fade-in overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-primary/5" />
+        <CardContent className="p-6 relative">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-foreground">
-                {getGreeting()}, {profile?.full_name || "User"}! 👋
+                {getGreeting()}, <span className="text-secondary">{profile?.full_name || "User"}</span>! 👋
               </h2>
               <p className="text-muted-foreground mt-1">
                 Welcome to IGMS. You are logged in as <span className="font-medium text-primary">{getRoleDisplay()}</span>
@@ -47,7 +48,7 @@ export default function Dashboard() {
             </div>
             <div className="text-right hidden sm:block">
               <p className="text-sm text-muted-foreground">Today's Date</p>
-              <p className="font-semibold">{new Date().toLocaleDateString('en-IN', { 
+              <p className="font-semibold text-foreground">{new Date().toLocaleDateString('en-IN', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
