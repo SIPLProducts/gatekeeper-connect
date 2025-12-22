@@ -6,20 +6,29 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, Building2, Bell, Lock, Palette, Globe, Users, Shield } from "lucide-react";
+import { Building2, Bell, Lock, Palette, Globe, Sun, Moon, Monitor } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { UserManagement } from "@/components/settings/UserManagement";
 import { ScreenPermissions } from "@/components/settings/ScreenPermissions";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { cn } from "@/lib/utils";
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("general");
   const { isAdmin } = useAuth();
+  const { theme, language, setTheme, setLanguage } = useTheme();
 
   const handleSave = () => {
     toast.success("Settings saved successfully");
   };
+
+  const themeOptions = [
+    { value: "light", label: "Light", icon: Sun },
+    { value: "dark", label: "Dark", icon: Moon },
+    { value: "system", label: "System", icon: Monitor },
+  ] as const;
 
   return (
     <MainLayout title="Settings" subtitle="Configure system preferences and options">
@@ -47,7 +56,7 @@ export default function Settings() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="language">Language</Label>
-                  <Select defaultValue="en">
+                  <Select value={language} onValueChange={(val) => setLanguage(val as "en" | "hi" | "te")}>
                     <SelectTrigger id="language">
                       <SelectValue />
                     </SelectTrigger>
@@ -96,7 +105,7 @@ export default function Settings() {
                   </Select>
                 </div>
               </div>
-              <Button onClick={handleSave} variant="hero">Save Changes</Button>
+              <Button onClick={handleSave}>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -129,7 +138,7 @@ export default function Settings() {
                   <Input id="address" defaultValue="Industrial Area, Phase-2, Hyderabad" />
                 </div>
               </div>
-              <Button onClick={handleSave} variant="hero">Save Changes</Button>
+              <Button onClick={handleSave}>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -186,7 +195,7 @@ export default function Settings() {
                   <Switch defaultChecked />
                 </div>
               </div>
-              <Button onClick={handleSave} variant="hero">Save Changes</Button>
+              <Button onClick={handleSave}>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -226,7 +235,7 @@ export default function Settings() {
                   </Select>
                 </div>
               </div>
-              <Button onClick={handleSave} variant="hero">Save Changes</Button>
+              <Button onClick={handleSave}>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -242,14 +251,35 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Dark Mode</p>
-                    <p className="text-sm text-muted-foreground">Use dark color scheme</p>
+                <div>
+                  <Label className="mb-3 block">Theme</Label>
+                  <div className="flex gap-3">
+                    {themeOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setTheme(option.value)}
+                        className={cn(
+                          "flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all min-w-[100px]",
+                          theme === option.value
+                            ? "border-primary bg-primary/10"
+                            : "border-border hover:border-muted-foreground/30"
+                        )}
+                      >
+                        <option.icon className={cn(
+                          "h-6 w-6",
+                          theme === option.value ? "text-primary" : "text-muted-foreground"
+                        )} />
+                        <span className={cn(
+                          "text-sm font-medium",
+                          theme === option.value ? "text-primary" : "text-muted-foreground"
+                        )}>
+                          {option.label}
+                        </span>
+                      </button>
+                    ))}
                   </div>
-                  <Switch />
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between pt-4">
                   <div>
                     <p className="font-medium">Compact View</p>
                     <p className="text-sm text-muted-foreground">Reduce spacing in tables</p>
@@ -257,7 +287,6 @@ export default function Settings() {
                   <Switch />
                 </div>
               </div>
-              <Button onClick={handleSave} variant="hero">Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -17,6 +16,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSidebar } from "@/contexts/SidebarContext";
+import { useScreenPermissions } from "@/hooks/useScreenPermissions";
 import { toast } from "sonner";
 
 const navigation = [
@@ -32,10 +33,11 @@ const navigation = [
 ];
 
 export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggleCollapsed } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
-  const { profile, roles, signOut } = useAuth();
+  const { profile, roles, signOut, isAdmin } = useAuth();
+  const { canViewScreen, loading: permissionsLoading } = useScreenPermissions();
 
   const handleLogout = async () => {
     await signOut();
@@ -65,6 +67,16 @@ export function Sidebar() {
     return roleLabels[roles[0]] || roles[0];
   };
 
+  // Filter navigation based on permissions
+  const filteredNavigation = navigation.filter((item) => {
+    // Always show Dashboard and Settings
+    if (item.href === "/" || item.href === "/settings") return true;
+    // Admin sees everything
+    if (isAdmin) return true;
+    // Check permissions
+    return canViewScreen(item.href);
+  });
+
   return (
     <aside
       className={cn(
@@ -86,7 +98,7 @@ export function Sidebar() {
           )}
         </div>
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleCollapsed}
           className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-foreground transition-colors hover:bg-sidebar-accent/80"
         >
           {collapsed ? (
@@ -99,7 +111,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {navigation.map((item) => {
+        {filteredNavigation.map((item) => {
           const isActive = location.pathname === item.href;
           return (
             <Link
